@@ -46,6 +46,8 @@ class Domiciliario(models.Model):
     id_domiciliario = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=45)
     apellido = models.CharField(max_length=45)
+    correo = models.CharField(max_length=45)
+    contrasena = models.CharField(max_length=45)
 
 
 class Cliente(models.Model):
@@ -86,3 +88,37 @@ class Inventario(models.Model):
 
 class orden_producto(models.Model):
     id_producto_orden = models.AutoField(primary_key=True)
+    cantidad = models.SmallIntegerField()
+    valor_unitario = models.IntegerField()
+    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    id_orden = models.ForeignKey(Orden, on_delete=models.CASCADE)
+
+
+class Carrito(models.Model):
+    id_carrito = models.AutoField(primary_key=True)
+    valor_total = models.IntegerField()
+    id_cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+
+
+class carrito_producto(models.Model):
+    id_carrito_producto = models.AutoField(primary_key=True)
+    cantidad = models.SmallIntegerField()
+    valor_unitario = models.IntegerField()
+    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    id_carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
+
+
+admin.site.register(Ciudad)
+admin.site.register(Sede)
+admin.site.register(Administrador)
+admin.site.register(Producto)
+admin.site.register(Categoria)
+admin.site.register(categoria_producto)
+admin.site.register(Domiciliario)
+admin.site.register(Cliente)
+admin.site.register(Orden)
+admin.site.register(Factura)
+admin.site.register(Inventario)
+admin.site.register(orden_producto)
+admin.site.register(Carrito)
+admin.site.register(carrito_producto)
