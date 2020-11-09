@@ -18,6 +18,7 @@ class Administrador(models.Model):
     id_administrador = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=45)
     apellido = models.CharField(max_length=45)
+    correo = models.CharField(max_length=45)
     contrasena = models.CharField(max_length=45)
     id_sede = models.ForeignKey(Sede, on_delete=models.CASCADE)
 
@@ -48,14 +49,21 @@ class Domiciliario(models.Model):
     apellido = models.CharField(max_length=45)
     correo = models.CharField(max_length=45)
     contrasena = models.CharField(max_length=45)
+    id_sede = models.ForeignKey(Sede, on_delete=models.CASCADE)
 
 
 class Cliente(models.Model):
     id_cliente = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=45)
     apellido = models.CharField(max_length=45)
+    celular = models.CharField(max_length=45)
     correo = models.CharField(max_length=45)
     clave = models.CharField(max_length=45)
+
+
+class Estado_orden(models.Model):
+    id_estado_orden = models.AutoField(primary_key=True)
+    nombre_estado = models.CharField(max_length=45)
 
 
 class Orden(models.Model):
@@ -68,6 +76,7 @@ class Orden(models.Model):
     id_sede = models.ForeignKey(Sede, on_delete=models.CASCADE)
     id_domiciliario = models.ForeignKey(Domiciliario, on_delete=models.CASCADE)
     id_cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    id_estado_orden = models.ForeignKey(Estado_orden, on_delete=models.CASCADE)
 
 
 class Factura(models.Model):
@@ -122,3 +131,4 @@ admin.site.register(Inventario)
 admin.site.register(orden_producto)
 admin.site.register(Carrito)
 admin.site.register(carrito_producto)
+admin.site.register(Estado_orden)
