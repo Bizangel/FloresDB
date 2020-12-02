@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from FloresDB.views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('floristeria/', include('apps.floristeria.urls'))
+    path('floristeria/', include('apps.floristeria.urls')),
+    path('', index),
+    path('accounts/', include('django.contrib.auth.urls'))
 ]
