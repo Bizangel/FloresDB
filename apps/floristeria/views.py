@@ -2,9 +2,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
-from apps.floristeria.models import Categoria, Producto, Administrador
-from apps.floristeria.models import categoria_producto
+from apps.floristeria.models import Categoria, Producto, Administrador, Sede
+from apps.floristeria.models import categoria_producto, Domiciliario
 from apps.floristeria.forms import CategoriaForm, ProductoForm, ClienteForm
+from apps.floristeria.forms import DomiciliarioForm
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as DjangoUser
@@ -171,3 +172,87 @@ def crearProductos(request):
                       {'form': form, 'crear': crear})
     else:
         return index(request)
+
+
+# Domiciliarios
+@login_required
+def registrarDomiciliario(request):
+    if request.user.groups.filter(name="Administrador").exists():
+        if request.method == 'POST':
+            form = DomiciliarioForm(request.POST)
+
+            if form.is_valid():
+                sedeNombre = form.cleaned_data['sede']
+                sede = Sede.objects.get(nombre=sedeNombre)
+
+                search = DjangoUser.objects.filter(
+                    username=form.cleaned_data['username'])
+                if len(search) > 0:  # Ya existe
+                    contexto = {'form': form}
+                    messages.error(request, 'Ese nombre de usuario ya esta en uso')
+                    return render(request, 'floristeria/registrarDomiciliario.html', contexto)
+
+                form = form.save(commit=False)
+                nuevoCliente = DjangoUser.objects.create_user(
+                    form.username, form.correo, form.contrasena)
+
+                clientes = DjangoGroup.objects.get(name='Domiciliario')
+                clientes.user_set.add(nuevoCliente)
+
+                form.id_sede = sede
+                form.contrasena = '.'  # Remove pass
+                form.save()
+
+                return redirect('consultarDomiciliarios')
+            else:
+
+                form = DomiciliarioForm()
+                contexto = {'form': form}
+                return render(request, 'floristeria/registrarDomiciliario.html', contexto)
+
+        else:
+            form = DomiciliarioForm()
+            contexto = {'form': form}
+            return render(request, 'floristeria/registrarDomiciliario.html', contexto)
+
+
+@login_required
+def editarDomiciliario(request, id_dom):
+    if request.user.groups.filter(name="Administrador").exists():
+        domici = Domiciliario.objects.get(id_domiciliario=id_dom)
+        if request.method == 'POST':
+            form = DomiciliarioForm(request.POST, instance=domici)
+            if form.is_valid():
+                sedeNombre = form.cleaned_data['sede']
+                sede = Sede.objects.get(nombre=sedeNombre)
+
+                form = form.save(commit=False)  # new form instance
+                form.id_sede = sede
+                form.save()
+                return redirect('consultarDomiciliarios')
+            else:
+                print('invalid')
+
+        form = DomiciliarioForm(instance=domici)
+        form.fields.pop('username')
+        form.fields.pop('contrasena')
+
+        contexto = {'form': form}
+        return render(request, 'floristeria/editarDomiciliario.html', contexto)
+    else:
+        return redirect('index')  # Al login
+
+
+@login_required
+def consultarDomiciliarios(request):
+
+    if request.user.groups.filter(name="Administrador").exists():
+        # Productos = Producto.objects.order_by('-id_producto') #descendiente
+        domiciliarios = Domiciliario.objects.order_by('id_domiciliario')  # ascendiente
+
+        consultar = True
+        contexto = {'domiciliarios': domiciliarios, 'consultar': consultar}
+        print('read')
+        return render(request, 'floristeria/consultarDomiciliarios.html', contexto)
+    else:
+        return redirect('index')  # Al login

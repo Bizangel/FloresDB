@@ -11,28 +11,26 @@
      <tr>
          <th>Id</th>
          <th>Nombre</th>
-         <th>Valor</th>
-         <th>Registrado por</th>
+         <th>Apellido</th>
          <!-- <th id="createCategory"> Categoría (Hacer click para añadir)</th> -->
-         <th> Categoría </th>
-         <th ></th>
+         <th> Correo </th>
+         <th > Sede</th>
+         <th> </th>
      </tr>
  </thead>
      <tbody>
-         {% if productos %}
-         {% for producto in productos %}
+         {% if domiciliarios %}
+         {% for domiciliario in domiciliarios %}
          <tr>
-             <td>{{ producto.id_producto }}</td>
-             <td>{{ producto.nombre_producto }}</td>
-             <td>{{ producto.valor_base }}</td>
-             <td>{{ producto.id_administrador.username }}</td>
-             <td> {{ producto.categoria }} </td>
+             <td>{{ domiciliario.id_domiciliario }}</td>
+             <td>{{ domiciliario.nombre }}</td>
+             <td>{{ domiciliario.apellido }}</td>
+             <td>{{ domiciliario.correo }}</td>
+             <td> {{ domiciliario.id_sede.nombre }} </td>
              <td>
-                 <a href="{% url 'editarProducto' producto.id_producto %}">
-                 <i class="fas fa-edit" style='cursor: pointer;'></i>
-                 </a>
-                 <i class="fas fa-trash-alt" onclick="displayDeleteModal({{ producto.id_producto}}, '{{ producto.nombre_producto }}')" style="cursor: pointer;"></i>
 
+                 <a href="{% url 'editarDomiciliario' domiciliario.id_domiciliario %}">
+                 <i class="fas fa-edit" style='cursor: pointer;'></i>
              </td>
          </tr>
          {% endfor %}
@@ -72,10 +70,9 @@
 
 
 <script>
-function displayDeleteModal(prod_id, prod_name){
-    document.getElementById('product_delete_text').innerText = '¿Estás seguro que deseas eliminar al producto: ' + prod_name + '?'
-    document.getElementById('deleteForm').action = '/floristeria/eliminarProducto/' + prod_id
-    // $("#product_delete_text").inner = 'Estas seguro que deseas eliminar al producto: ' + prod_name
+function displayDeleteModal(dom_id, dom_name, dom_apellido){
+    document.getElementById('product_delete_text').innerText = '¿Estás seguro que deseas eliminar al domiciliario: ' + dom_name + ' ' + dom_apellido + '?'
+    document.getElementById('deleteForm').action = '/floristeria/eliminarDomiciliario/' + dom_id
     $("#deleteModal").modal()
 }
 

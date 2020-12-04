@@ -1,6 +1,6 @@
 from django import forms
-from apps.floristeria.models import Producto, Categoria, Administrador
-from apps.floristeria.models import categoria_producto, Cliente
+from apps.floristeria.models import Producto, Categoria, Administrador, Sede
+from apps.floristeria.models import categoria_producto, Cliente, Domiciliario
 
 GEEKS_CHOICES = (
     ("1", "One"),
@@ -65,6 +65,35 @@ class ClienteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ClienteForm, self).__init__(*args, **kwargs)
+        # Le asigna el estilo de bootstrap
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+
+class DomiciliarioForm(forms.ModelForm):
+    sede = forms.ChoiceField(
+        choices=[(sed.nombre, sed.nombre) for sed in Sede.objects.all()])
+
+    class Meta:
+        model = Domiciliario
+        fields = [
+            'nombre',
+            'apellido',
+            'correo',
+            'username',
+            'contrasena'
+        ]
+
+        widgets = {
+            'nombre': forms.TextInput(attrs={'placeholder': 'Nombre'}),
+            'apellido': forms.TextInput(attrs={'placeholder': 'Apellido'}),
+            'correo': forms.EmailInput(attrs={'placeholder': 'ejemplo@gmail.com'}),
+            'username': forms.TextInput(attrs={'placeholder': 'Usuario'}),
+            'contrasena': forms.PasswordInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(DomiciliarioForm, self).__init__(*args, **kwargs)
         # Le asigna el estilo de bootstrap
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
