@@ -5,6 +5,8 @@ from apps.floristeria.views import crearProductos, eliminarProducto
 from apps.floristeria.views import editarProducto, registrarDomiciliario
 from apps.floristeria.views import consultarDomiciliarios, editarDomiciliario
 
+from apps.floristeria.views import consultarCarrito
+
 
 urlpatterns = [
     path('', index, name='index'),
@@ -21,4 +23,6 @@ urlpatterns = [
     path('registrarDomiciliario', registrarDomiciliario, name="registrarDomiciliario"),
     path('consultarDomiciliarios', consultarDomiciliarios, name='consultarDomiciliarios'),
     path('editarDomiciliario/<id_dom>', editarDomiciliario, name="editarDomiciliario"),
+
+    path('consultarCarrito', consultarCarrito, name='consultarCarrito')
 ]

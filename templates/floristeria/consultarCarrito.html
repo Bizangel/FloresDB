@@ -1,0 +1,79 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+
+<script src="https://unpkg.com/sticky-table-headers"></script>
+
+
+<table class="table table-striped">
+ <thead class="thead-dark">
+     <tr>
+         <th>Nombre</th>
+         <th>Cantidad</th>
+         <th>Valor Unitario</th>
+         <th> Categoría </th>
+         <th ></th>
+     </tr>
+ </thead>
+     <tbody>
+         {% if carrito_productos %}
+         {% for producto in carrito_productos %}
+         <tr>
+             <td>{{ producto.id_producto.nombre_producto }}</td>
+             <td>{{ producto.cantidad }}</td>
+             <td>{{ producto.valor_unitario }}</td>
+             <td> {{ producto.producto.categoria }} </td>
+             <td>
+                 <i class="fas fa-trash-alt" onclick="displayDeleteModal({{ producto.id_producto}}, '{{ producto.nombre_producto }}')" style="cursor: pointer;"></i>
+             </td>
+         </tr>
+         {% endfor %}
+         {% endif %}
+     </tbody>
+
+
+</table>
+
+<!-- Create Category Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirmación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="alert alert-warning" id="product_delete_text" role="alert">
+          </div>
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+        <form action="" name="" id="deleteForm" method="post">
+            {% csrf_token %}
+            <input class="btn btn-danger" type="submit" value="Eliminar"/>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+function displayDeleteModal(prod_id, prod_name){
+    document.getElementById('product_delete_text').innerText = '¿Estás seguro que deseas eliminar al producto: ' + prod_name + '?'
+    document.getElementById('deleteForm').action = '/floristeria/eliminarProducto/' + prod_id
+    // $("#product_delete_text").inner = 'Estas seguro que deseas eliminar al producto: ' + prod_name
+    $("#deleteModal").modal()
+}
+
+$('table').stickyTableHeaders();
+
+</script>
+
+{% endblock %}

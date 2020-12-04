@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from apps.floristeria.models import Categoria, Producto, Administrador, Sede
-from apps.floristeria.models import categoria_producto, Domiciliario
+from apps.floristeria.models import categoria_producto, Domiciliario, Cliente
+from apps.floristeria.models import carrito_producto, Carrito
 from apps.floristeria.forms import CategoriaForm, ProductoForm, ClienteForm
 from apps.floristeria.forms import DomiciliarioForm
 
@@ -18,7 +19,8 @@ from django.contrib import messages
 
 def index(request):
     # Dependiendo del usuario redirigirlo propiament
-    return render(request, 'index.html')
+    productos = Producto.objects.all()
+    return render(request, 'index.html', {'productos': productos})
 
 
 @login_required
@@ -252,7 +254,31 @@ def consultarDomiciliarios(request):
 
         consultar = True
         contexto = {'domiciliarios': domiciliarios, 'consultar': consultar}
-        print('read')
+
         return render(request, 'floristeria/consultarDomiciliarios.html', contexto)
+    else:
+        return redirect('index')  # Al login
+
+
+# Carritos
+
+@login_required
+def consultarCarrito(request):
+    if request.user.groups.filter(name="Cliente").exists():
+        cliente = Cliente.objects.get(username=request.user.username)
+
+        if len(Carrito.objects.filter(id_cliente=cliente)) == 0:
+            # Create carrito
+            carrito = Carrito(valor_total=0, id_cliente=cliente)
+            carrito.save()
+        else:
+            carrito = Carrito.objects.get(id_cliente=cliente)
+
+        carrito_productos = carrito_producto.objects.filter(id_carrito=carrito)
+
+        consultar = True
+        contexto = {'carrito_productos': carrito_productos, 'consultar': consultar}
+
+        return render(request, 'floristeria/consultarCarrito.html', contexto)
     else:
         return redirect('index')  # Al login
