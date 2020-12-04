@@ -18,6 +18,7 @@ class Administrador(models.Model):
     id_administrador = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=45)
     apellido = models.CharField(max_length=45)
+    username = models.CharField(max_length=45, default='Usuario')
     correo = models.CharField(max_length=45)
     contrasena = models.CharField(max_length=45)
     id_sede = models.ForeignKey(Sede, on_delete=models.CASCADE)
@@ -29,6 +30,11 @@ class Producto(models.Model):
     valor_base = models.IntegerField()
     id_administrador = models.ForeignKey(Administrador,
                                          on_delete=models.CASCADE)
+
+    @property
+    def categoria(self):
+        return categoria_producto.objects.get(id_producto=self
+                                              ).id_categoria.nombre_categoria
 
 
 class Categoria(models.Model):
@@ -48,6 +54,7 @@ class Domiciliario(models.Model):
     nombre = models.CharField(max_length=45)
     apellido = models.CharField(max_length=45)
     correo = models.CharField(max_length=45)
+    username = models.CharField(max_length=45, default='Usuario')
     contrasena = models.CharField(max_length=45)
     id_sede = models.ForeignKey(Sede, on_delete=models.CASCADE)
 
@@ -58,6 +65,7 @@ class Cliente(models.Model):
     apellido = models.CharField(max_length=45)
     celular = models.CharField(max_length=45)
     correo = models.CharField(max_length=45)
+    username = models.CharField(max_length=45, default='Usuario')
     clave = models.CharField(max_length=45)
 
 

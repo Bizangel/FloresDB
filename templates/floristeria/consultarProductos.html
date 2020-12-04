@@ -1,53 +1,21 @@
 {% extends 'base/base.html' %}
+
+
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">Navbar</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
 
-  <div class="collapse navbar-collapse" id="navbarColor02">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home
-          <span class="sr-only">(current)</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">About</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Separated link</a>
-        </div>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search">
-      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
+<script src="https://unpkg.com/sticky-table-headers"></script>
 
-<table class="table">
- <thead>
+
+<table class="table table-striped">
+ <thead class="thead-dark">
      <tr>
          <th>Id</th>
          <th>Nombre</th>
-         {% if administrador %}
-         <th>Administrador</th>
-         {% endif %}
+         <th>Valor</th>
+         <th>Registrado por</th>
+         <!-- <th id="createCategory"> Categoría (Hacer click para añadir)</th> -->
+         <th> Categoría </th>
+         <th ></th>
      </tr>
  </thead>
      <tbody>
@@ -56,12 +24,63 @@
          <tr>
              <td>{{ producto.id_producto }}</td>
              <td>{{ producto.nombre_producto }}</td>
-             {% if administrador %}
-             <td>{{ administrador.username }}</th>
-            {% endif %}
+             <td>{{ producto.valor_base }}</td>
+             <td>{{ producto.id_administrador.username }}</td>
+             <td> {{ producto.categoria }} </td>
+             <td>
+                 <a href="{% url 'editarProducto' producto.id_producto %}">
+                 <i class="fas fa-edit" onclick="attemptEditProducto({{ producto.id_producto }}, '{{producto.nombre_producto }}')" style='cursor: pointer;'></i>
+                 </a>
+                 <i class="fas fa-trash-alt" onclick="displayDeleteModal({{ producto.id_producto}}, '{{ producto.nombre_producto }}')" style="cursor: pointer;"></i>
+
+             </td>
          </tr>
          {% endfor %}
          {% endif %}
      </tbody>
+
+
 </table>
+
+<!-- Create Category Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirmación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="alert alert-warning" id="product_delete_text" role="alert">
+          </div>
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+        <form action="" name="" id="deleteForm" method="post">
+            {% csrf_token %}
+            <input class="btn btn-danger" type="submit" value="Eliminar"/>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+function displayDeleteModal(prod_id, prod_name){
+    document.getElementById('product_delete_text').innerText = '¿Estás seguro que deseas eliminar al producto: ' + prod_name + '?'
+    document.getElementById('deleteForm').action = '/floristeria/eliminarProducto/' + prod_id
+    // $("#product_delete_text").inner = 'Estas seguro que deseas eliminar al producto: ' + prod_name
+    $("#deleteModal").modal()
+}
+
+$('table').stickyTableHeaders();
+
+</script>
+
 {% endblock %}

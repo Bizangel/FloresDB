@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+
+{% block header %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/body.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-3"> </div>
+        <div class="card text-white bg-success col-6">
+            <div class="card-header">
+                <h3> Registrate! </h3>
+            </div>
+
+            <div class="card-body">
+                <form method="post">
+                 {% csrf_token %}
+                 {{form.as_p}}
+                 <button class="btn btn-primary" type="submit">Registrarse</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% if messages %}
+<div class="toast fixed-bottom" id="successToast" role="alert" aria-live="assertive" aria-atomic="true" >
+  <div class="toast-header bg-warning">
+    <!-- <div class="toast-header bg-success" style="position: absolute; top: 0; right: 0;"> -->
+    <i class="fas fa-exclamation-triangle" style="color:#ffffff;"></i> &nbsp &nbsp
+    {% for message in messages %}
+    <strong class="mr-auto text-white">   {{ message }} </strong>
+
+    {% endfor %}
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</div>
+
+<script>
+function showSuccessToast(){
+    options = {delay: 20000}
+    $('#successToast').toast(options)
+    $('#successToast').toast('show')
+}
+showSuccessToast();
+</script>
+
+
+
+{% endif %}
+
+{% endblock %}
